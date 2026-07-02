@@ -2,6 +2,7 @@ import {useState, useEffect} from "react";
 import { supabase } from "./services/supabaseClient";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Groceries from "./pages/Groceries";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -19,8 +20,11 @@ export default function App() {
   if (session) {
     return (
       <div>
-        <h1>Welcome, {session.user.email}</h1>
-        <button onClick={() => supabase.auth.signOut()}>Sign Out</button>
+      <div>
+        <span>Logged in as: {session.user.email}</span>
+        <button onClick={() => supabase.auth.signOut()}>Log Out</button>
+      </div>
+      <Groceries displayName={session.user.email} />
       </div>
     );
   }
