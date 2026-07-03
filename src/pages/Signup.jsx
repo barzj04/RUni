@@ -32,7 +32,7 @@ export default function Signup() {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleSignup}>Sign Up</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}                         
     </div>
   );
 }
