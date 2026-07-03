@@ -1,5 +1,7 @@
 import {useState, useEffect} from 'react';
 import { fetchGroceries,addGrocery,togglePaidBack, deleteGrocery, clearAllGroceries } from '../services/groceryService';
+import { sanitizeInput } from '../utils/sanitize'
+import Spinner from '../components/Spinner'
 
 export default function Groceries({displayName}) {
     const [groceries, setGroceries] = useState([]);
@@ -9,33 +11,40 @@ export default function Groceries({displayName}) {
     const[error, setError] = useState(null);
     const[confirmDelete, setConfirmDelete] = useState(false);
     const[confirmClear, setConfirmClear] = useState(false);
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         loadGroceries();
     }, []);
 
     async function loadGroceries() {
+        setLoading(true)
+        await new Promise(resolve => setTimeout(resolve, 2000))
         try {
             const data = await fetchGroceries();
             setGroceries(data);
         } catch (err) {
             setError(err.message);
+        }finally {
+            setLoading(false)
         }
     }
 
     async function handleAdd() {
-        if (!item.trim()){
-            setError("Please enter an item name.");
-            return;  
+        if (!item.trim()) {
+        setError('Please enter an item name.')
+        return
         }
-        const parsedPrice = parseFloat(price)|| 0;
+        const parsedPrice = parseFloat(price) || 0
+        const sanitizedItem = sanitizeInput(item)
+       
         try {
-            await addGrocery(item.trim (), parsedPrice, paidBy);
-            setItem("");
-            setPrice("");
-
-            await loadGroceries();
+        await addGrocery(sanitizedItem, parsedPrice, paidBy)
+        setItem('')
+        setPrice('')
+        await loadGroceries()
         } catch (err) {
-            setError(err.message);
+        setError(err.message)
         }
     }
     async function handleTogglePaidBack(id, currentValue) {
@@ -68,6 +77,7 @@ export default function Groceries({displayName}) {
     const eachOwes = total / 2;
     const paidByMe = groceries.filter(g => g.paid_by === displayName).reduce((sum, g) => sum + (g.price || 0), 0);
     const balance = paidByMe - eachOwes;
+    if (loading) return <Spinner />
     return (
         <div>
             <h1> Shared Groceries</h1>
