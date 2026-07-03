@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { fetchGroceryWishlist, addGroceryWishlist, deleteGroceryWishlist, moveToGroceries } from '../services/groceryWishlistService'
+import { sanitizeInput } from '../utils/sanitize'
 
 export default function GroceryWishlist({ displayName }) {
   const [wishlist, setWishlist] = useState([])
@@ -26,8 +27,9 @@ export default function GroceryWishlist({ displayName }) {
       setError('Please enter an item.')
       return
     }
+    const sanitizedItem = sanitizeInput(item)
     try {
-      await addGroceryWishlist(item.trim(), displayName)
+      await addGroceryWishlist(sanitizedItem, displayName)
       setItem('')
       await loadWishlist()
     } catch (err) {

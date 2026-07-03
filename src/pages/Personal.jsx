@@ -9,6 +9,7 @@ import {
     togglePersonalTodo,
     deletePersonalTodo
 } from '../services/personalService';
+import { sanitizeInput } from '../utils/sanitize'
 
 export default function Personal({ userId, displayName }) {
     const [wishlist, setWishlist] = useState([]);
@@ -42,8 +43,9 @@ export default function Personal({ userId, displayName }) {
             setError('Item cannot be empty');
             return;
         }
+        const sanitizedItem = sanitizeInput(wishItem)
         try{
-            await addPersonalWishlist(userId, displayName, wishItem.trim());
+            await addPersonalWishlist(userId, displayName, sanitizedItem);
             setWishItem('');
             await loadAll();
         } catch (err) {
@@ -72,8 +74,9 @@ export default function Personal({ userId, displayName }) {
             setError('Task cannot be empty');
             return;
         }
+        const sanitizedTask = sanitizeInput(todoTask)
         try{
-            await addPersonalTodo(userId, displayName, todoTask.trim());
+            await addPersonalTodo(userId, displayName, sanitizedTask);
             setTodoTask('');
             await loadAll();
         } catch (err) {
