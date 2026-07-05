@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { fetchGroceryWishlist, addGroceryWishlist, deleteGroceryWishlist, moveToGroceries } from '../services/groceryWishlistService'
 import { sanitizeInput } from '../utils/sanitize'
+import Spinner from '../components/Spinner'
 
 export default function GroceryWishlist({ displayName }) {
   const [wishlist, setWishlist] = useState([])
   const [item, setItem] = useState('')
-
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
 
@@ -14,11 +15,14 @@ export default function GroceryWishlist({ displayName }) {
   }, [])
 
   async function loadWishlist() {
+    setLoading(true)
     try {
       const data = await fetchGroceryWishlist()
       setWishlist(data)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -55,7 +59,7 @@ export default function GroceryWishlist({ displayName }) {
       setError(err.message)
     }
   }
-
+  if (loading) return <Spinner />
   return (
     <div>
       <h2>Grocery Wishlist</h2>

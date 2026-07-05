@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import { fetchGroceries,addGrocery,togglePaidBack, deleteGrocery, clearAllGroceries } from '../services/groceryService';
 import { sanitizeInput } from '../utils/sanitize'
 import Spinner from '../components/Spinner'
+import { calculateBill } from '../utils/billSplitting'
 
 export default function Groceries({displayName}) {
     const [groceries, setGroceries] = useState([]);
@@ -19,7 +20,6 @@ export default function Groceries({displayName}) {
 
     async function loadGroceries() {
         setLoading(true)
-        await new Promise(resolve => setTimeout(resolve, 2000))
         try {
             const data = await fetchGroceries();
             setGroceries(data);
@@ -73,10 +73,7 @@ export default function Groceries({displayName}) {
             setError(err.message);
         }
     }
-    const total=groceries.reduce((sum, g) => sum + (g.price || 0), 0);
-    const eachOwes = total / 2;
-    const paidByMe = groceries.filter(g => g.paid_by === displayName).reduce((sum, g) => sum + (g.price || 0), 0);
-    const balance = paidByMe - eachOwes;
+    const { total, eachOwes, paidByMe, balance } = calculateBill(groceries, displayName)
     if (loading) return <Spinner />
     return (
         <div>
