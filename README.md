@@ -1,16 +1,50 @@
-# React + Vite
+# RUni 🍳
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A shared household management app for roommates, built with React + Supabase.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Groceries** — shared grocery list with 50/50 bill splitting and paid back tracking
+- **Grocery Wishlist** — shared list of ingredients to buy someday, moveable to the bill
+- **Personal Tab** — private wishlist and to-do list, protected with Row Level Security
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React (Vite)
+- Supabase (Auth, Database, Row Level Security)
+- Vitest (Unit Testing)
 
-## Expanding the ESLint configuration
+## Security
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Input sanitization to prevent XSS attacks
+- Row Level Security on personal data — only the owner can read/write their own data
+- Environment variables for all secrets — never committed to GitHub
+- Supabase Auth for session management
+
+## Software Engineering Practices
+
+- Feature branch workflow — all features developed on separate branches, merged into dev, then main
+- Semantic commit messages — e.g. `feat:`, `fix:`, `security:`, `test:`
+- Separation of concerns — services, pages, components, and utils in separate folders
+- Unit tested bill splitting logic
+- Loading states on all data fetching
+
+## Project Structure
+src/
+├── components/    # reusable UI pieces (Navbar, Spinner)
+├── pages/         # full page views (Groceries, Personal, etc.)
+├── services/      # all Supabase calls
+├── hooks/         # custom React hooks
+└── utils/         # helper functions (sanitize, billSplitting)
+
+## Local Setup
+
+1. Clone the repo
+2. Run `npm install`
+3. Create a `.env` file with your Supabase credentials:
+VITE_SUPABASE_URL=your_project_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+4. Run `npm run dev`
+
+## Running Tests
+npm test
