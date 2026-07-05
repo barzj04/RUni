@@ -48,30 +48,34 @@ We don't just write code; we write *nice* code.
 *   **Bulletproof Math:** Unit-tested bill-splitting logic to prevent fractional-penny arguments.
 *   **Smooth UX:** Elegant loading states on all data fetching. No awkward layout shifts here.
 ---
-🚀 Local Setup
+## 🚀 Local Setup
+
 Want to run RUni locally? Let's get you set up in less time than it takes to argue about whose turn it is to take out the trash.
 
-Clone the repo:
+1. Clone the repo:
 
 Bash
 git clone [https://github.com/yourusername/runi.git](https://github.com/yourusername/runi.git)
 cd runi
-Install the dependencies:
+
+2. Install the dependencies:
 
 Bash
 npm install
-Feed the environment: Create a .env file in the root directory and drop in your Supabase credentials:
+
+3. Feed the environment: Create a .env file in the root directory and drop in your Supabase credentials:
 
 Code snippet
 VITE_SUPABASE_URL=your_project_url
 VITE_SUPABASE_ANON_KEY=your_anon_key
-Fire it up:
+
+4. Fire it up:
 
 Bash
 npm run dev
+
 🧪 Running Tests
 Does the math actually add up? Check for yourself:
-
 Bash
 npm test
 ---
