@@ -96,6 +96,28 @@ export default function Groceries({displayName}) {
                 onChange={(e) => setPrice(e.target.value)}
                 className="border border-rose-200 rounded-lg px-3 py-2 w-32 focus:outline-none focus:ring-2 focus:ring-rose-300"
                 />
+                <div className="flex gap-2 flex-wrap items-end">
+                <div className="flex flex-col gap-1">
+                    <span className="text-xs text-gray-400">Paid by</span>
+                    {/* caption explaining the purpose of this dropdown */}
+                    <select value={paidBy} onChange={(e) => setPaidBy(e.target.value)}
+                    className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    <option value={displayName}>{displayName}</option>
+                    <option value="Rachel">Rachel</option>
+                    </select>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    <span className="text-xs text-gray-400">For who</span>
+                    {/* caption explaining this affects how the bill is split */}
+                    <select value={forWho} onChange={(e) => setForWho(e.target.value)}
+                    className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    <option value="both">Both</option>
+                    <option value={displayName}>{displayName}'s</option>
+                    <option value="Rachel">Rachel's</option>
+                    </select>
+                </div>
+                </div>
                 <select value={forWho} onChange={(e) => setForWho(e.target.value)}
                     className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
                     <option value="both">Both</option>
