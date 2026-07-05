@@ -78,6 +78,7 @@ npm run dev
 Does the math actually add up? Check for yourself:
 Bash
 npm test
+
 ---
 
 ## 📂 Project Structure
