@@ -75,7 +75,10 @@ Bash
 npm run dev
 
 🧪 Running Tests
-Does the math actually add up? Check for yourself:
+
+Does the math actually add up? 
+Check for yourself:
+
 Bash
 npm test
 
