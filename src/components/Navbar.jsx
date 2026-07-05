@@ -1,6 +1,5 @@
 export default function Navbar({ activePage, setActivePage, onLogout }) {
-  const tabs = ['Schedule','Groceries','Recipes', 'Wishlist', 'Personal']
-
+  const tabs = ['Schedule', 'Groceries', 'Recipes', 'Wishlist', 'Together', 'Personal']
   return (
     <nav className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
       <span className="text-xl font-bold text-rose-500">🍳 RUni</span>
