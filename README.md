@@ -1,50 +1,89 @@
-# RUni 🍳
+# 🍳 RUni (Roomie-Universe)
 
-A shared household management app for roommates, built with React + Supabase.
+> Because loving your roommates is easy. Keeping track of the shared grocery list? That's the real test.
 
-## Features
+**RUni** is a friendly household management app designed to keep everyone on the same page, take the guesswork out of splitting bills, and make sure the fridge is always stocked with the essentials everyone loves.
 
-- **Groceries** — shared grocery list with 50/50 bill splitting and paid back tracking
-- **Grocery Wishlist** — shared list of ingredients to buy someday, moveable to the bill
-- **Personal Tab** — private wishlist and to-do list, protected with Row Level Security
+---
 
-## Tech Stack
+## ✨ Features
 
-- React (Vite)
-- Supabase (Auth, Database, Row Level Security)
-- Vitest (Unit Testing)
+### 🛒 Groceries (The Battleground)
+*   **50/50 Bill Splitting:** Add items, split the costs automatically, and track who owes what.
+*   **Paid Back Tracking:** Mark debts as settled with a single click. No more passive-aggressive post-it notes on the fridge.
 
-## Security
+### 💡 Grocery Wishlist (The "Someday" List)
+*   A shared repository for dreams, cravings, and ingredients you might buy *eventually*. 
+*   Ready to buy? Move items instantly from the wishlist straight to the active bill.
 
-- Input sanitization to prevent XSS attacks
-- Row Level Security on personal data — only the owner can read/write their own data
-- Environment variables for all secrets — never committed to GitHub
-- Supabase Auth for session management
+### 🔒 Personal Tab (Your Private Sanctuary)
+*   A completely private wishlist and to-do list just for you. 
+*   **Row Level Security (RLS)** ensures your roommates will *never* see that you're planning to buy the expensive snacks you refuse to share.
 
-## Software Engineering Practices
+---
 
-- Feature branch workflow — all features developed on separate branches, merged into dev, then main
-- Semantic commit messages — e.g. `feat:`, `fix:`, `security:`, `test:`
-- Separation of concerns — services, pages, components, and utils in separate folders
-- Unit tested bill splitting logic
-- Loading states on all data fetching
+## 🛠️ The Tech Stack
 
-## Project Structure
+*   **Frontend:** React (powered by Vite, because life is too short for slow bundlers)
+*   **Backend-as-a-Service:** Supabase (Auth, Database, and bulletproof Row Level Security)
+*   **Testing:** Vitest (keeping our bill-splitting math flawless)
+
+---
+
+## 🛡️ Security (Fort Knox for Fridge Content)
+
+We take security seriously so you don't have to worry about your data (or your snacks) getting hijacked.
+*   **XSS Protection:** Rigorous input sanitization. No malicious scripts allowed in the grocery list.
+*   **Ironclad Privacy:** Row Level Security (RLS) guarantees that *only you* can read or write data in your Personal Tab.
+*   **Secret Keeping:** Environment variables handle all credentials. We *never* leak secrets to GitHub.
+*   **Session Control:** Secure, seamless user management powered by Supabase Auth.
+
+---
+
+## 🏗️ Software Engineering Practices
+
+We don't just write code; we write *nice* code.
+*   **Feature Branch Workflow:** Develop on a branch -> Merge to `dev` -> Release to `main`. No cowboy coding on main.
+*   **Semantic Commits:** Keeping the git history clean and readable (e.g., `feat: added snack protection`, `fix: math was mathing wrong`).
+*   **Separation of Concerns:** Clean architecture with dedicated folders for services, pages, components, and utils.
+*   **Bulletproof Math:** Unit-tested bill-splitting logic to prevent fractional-penny arguments.
+*   **Smooth UX:** Elegant loading states on all data fetching. No awkward layout shifts here.
+
+---
+
+## 📂 Project Structure
+
+```text
 src/
-├── components/    # reusable UI pieces (Navbar, Spinner)
-├── pages/         # full page views (Groceries, Personal, etc.)
-├── services/      # all Supabase calls
-├── hooks/         # custom React hooks
-└── utils/         # helper functions (sanitize, billSplitting)
+├── components/   # Reusable UI pieces (Navbar, Spinner, etc.)
+├── pages/        # Full page views (Groceries, Personal, Login)
+├── services/     # All Supabase API calls and database interactions
+├── hooks/        # Custom React hooks for clean state management
+└── utils/        # Helper functions (sanitize, billSplitting math)
 
-## Local Setup
+🚀 Local Setup
+Want to run RUni locally? Let's get you set up in less time than it takes to argue about whose turn it is to take out the trash.
 
-1. Clone the repo
-2. Run `npm install`
-3. Create a `.env` file with your Supabase credentials:
+Clone the repo:
+
+Bash
+git clone [https://github.com/yourusername/runi.git](https://github.com/yourusername/runi.git)
+cd runi
+Install the dependencies:
+
+Bash
+npm install
+Feed the environment: Create a .env file in the root directory and drop in your Supabase credentials:
+
+Code snippet
 VITE_SUPABASE_URL=your_project_url
 VITE_SUPABASE_ANON_KEY=your_anon_key
-4. Run `npm run dev`
+Fire it up:
 
-## Running Tests
+Bash
+npm run dev
+🧪 Running Tests
+Does the math actually add up? Check for yourself:
+
+Bash
 npm test
