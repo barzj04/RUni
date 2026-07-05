@@ -5,6 +5,21 @@ import Spinner from '../components/Spinner'
 const DAYS=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const MEALS=[ 'Lunch', 'Dinner']
 
+function getWeekDates() {
+  const today = new Date()
+  console.log('today:', today.toDateString())
+  const dayOfWeek = today.getDay()
+  console.log('dayOfWeek:', dayOfWeek)
+  const monday = new Date(today)
+  monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1))
+  console.log('monday:', monday.toDateString())
+  return DAYS.map((day, i) => {
+    const date = new Date(monday)
+    date.setDate(monday.getDate() + i)
+    return date
+  })
+}
+
 export default function Schedule({userId, displayName}) {
     const [schedules, setSchedules] = useState({});
     const [mySchedule, setMySchedule] = useState({});
@@ -13,7 +28,7 @@ export default function Schedule({userId, displayName}) {
     const [saved, setSaved] = useState(false)
     const [error, setError] = useState(null)
     const [partnerLastUpdated, setPartnerLastUpdated] = useState(null)
-
+    
     useEffect (()=>{
         loadSchedules()
     },[])
@@ -65,6 +80,8 @@ export default function Schedule({userId, displayName}) {
 
     const partnerName = displayName === 'Arleen'?'Rachel':'Arleen'
     const partnerSchedule = schedules[partnerName]||{}
+    const weekDates = getWeekDates()
+    const todayStr = new Date().toDateString()
     if (loading) return <Spinner />
 
   return (
@@ -93,23 +110,39 @@ export default function Schedule({userId, displayName}) {
         <h3 className="font-semibold text-gray-700 mb-4">👤 Your Availability</h3>
 
         <div className="flex flex-col gap-3">
-          {DAYS.map(day => (
-            <div key={day} className="flex items-center gap-4">
-              <span className="w-28 text-gray-600 font-medium text-sm">{day}</span>
-              {MEALS.map(meal => (
-                <label key={meal} className="flex items-center gap-1 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={mySchedule[day]?.[meal] || false}
-                    onChange={() => toggleMeal(day, meal)}
-                    className="accent-rose-400 w-4 h-4"
-                  />
-                  <span className="text-sm text-gray-500">{meal}</span>
-                </label>
-              ))}
+            {DAYS.map((day, i) => {
+            const date = weekDates[i]
+            const isToday = date.toDateString() === todayStr
+            // true if this day is today
+
+            return (
+                <div key={day} className={`flex items-center gap-4 p-2 rounded-lg ${isToday ? 'bg-rose-50 border border-rose-200' : ''}`}>
+                {/* highlight today with a rose background and border */}
+                <div className="w-36">
+                    <p className={`font-medium text-sm ${isToday ? 'text-rose-500' : 'text-gray-600'}`}>
+                    {day}
+                    {isToday && <span className="ml-2 text-xs bg-rose-400 text-white px-2 py-0.5 rounded-full">Today</span>}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                    {date.toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })}
+                    {/* e.g. "6 Jul" */}
+                    </p>
+                </div>
+                {MEALS.map(meal => (
+                    <label key={meal} className="flex items-center gap-1 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={mySchedule[day]?.[meal] || false}
+                        onChange={() => toggleMeal(day, meal)}
+                        className="accent-rose-400 w-4 h-4"
+                    />
+                    <span className="text-sm text-gray-500">{meal}</span>
+                    </label>
+                ))}
+                </div>
+            )
+            })}
             </div>
-          ))}
-        </div>
 
         <button
           onClick={handleSave}
@@ -125,32 +158,31 @@ export default function Schedule({userId, displayName}) {
         <h3 className="font-semibold text-gray-700 mb-4">🤝 Overlap with {partnerName}</h3>
 
         <div className="flex flex-col gap-2">
-          {DAYS.map(day => {
+          {DAYS.map((day, i) => {
+            const date = weekDates[i]
+            const isToday = date.toDateString() === todayStr
             const myLunch = mySchedule[day]?.Lunch
             const myDinner = mySchedule[day]?.Dinner
             const partnerLunch = partnerSchedule[day]?.Lunch
             const partnerDinner = partnerSchedule[day]?.Dinner
             const sharedLunch = myLunch && partnerLunch
             const sharedDinner = myDinner && partnerDinner
-            // only show overlap if both are free for the same meal
 
             if (!sharedLunch && !sharedDinner) return null
-            // skip days with no overlap
 
             return (
-              <div key={day} className="flex items-center gap-3">
-                <span className="w-28 text-gray-600 font-medium text-sm">{day}</span>
-                <div className="flex gap-2">
-                  {sharedLunch && (
-                    <span className="bg-rose-100 text-rose-500 px-3 py-1 rounded-full text-sm">🌞 Lunch</span>
-                  )}
-                  {sharedDinner && (
-                    <span className="bg-rose-100 text-rose-500 px-3 py-1 rounded-full text-sm">🌙 Dinner</span>
-                  )}
+                <div key={day} className={`flex items-center gap-3 p-2 rounded-lg ${isToday ? 'bg-rose-50' : ''}`}>
+                <div className="w-36">
+                    <p className={`font-medium text-sm ${isToday ? 'text-rose-500' : 'text-gray-600'}`}>{day}</p>
+                    <p className="text-xs text-gray-400">{date.toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })}</p>
                 </div>
-              </div>
+                <div className="flex gap-2">
+                    {sharedLunch && <span className="bg-rose-100 text-rose-500 px-3 py-1 rounded-full text-sm">🌞 Lunch</span>}
+                    {sharedDinner && <span className="bg-rose-100 text-rose-500 px-3 py-1 rounded-full text-sm">🌙 Dinner</span>}
+                </div>
+                </div>
             )
-          })}
+            })}
 
           {DAYS.every(day => !mySchedule[day]?.Lunch && !mySchedule[day]?.Dinner) && (
             <p className="text-gray-400 text-sm">No overlap yet — save your schedule first.</p>
