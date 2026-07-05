@@ -62,43 +62,52 @@ export default function GroceryWishlist({ displayName }) {
   if (loading) return <Spinner />
   return (
     <div>
-      <h2>Grocery Wishlist</h2>
-      <p>Items you want to buy someday — move them to the bill once bought.</p>
+      <h2 className="text-2xl font-bold text-gray-700 mb-6">📋 Grocery Wishlist</h2>
+      <p className="text-gray-400 text-sm mb-6">Items you want to buy someday — move them to the bill once bought.</p>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="text-red-400 mb-4">{error}</p>}
 
-      <div>
+      <div className="bg-white rounded-xl shadow p-4 mb-6 flex gap-2">
         <input
           type="text"
           placeholder="e.g. Miso paste, Tahini"
           value={item}
           onChange={(e) => setItem(e.target.value)}
+          className="border border-rose-200 rounded-lg px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-rose-300"
         />
-        <button onClick={handleAdd}>Add to Wishlist</button>
+        <button onClick={handleAdd} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors">
+          Add
+        </button>
       </div>
 
-      {wishlist.length === 0 && <p>Nothing on the wishlist yet.</p>}
+      {wishlist.length === 0 && <p className="text-gray-400 text-sm">Nothing on the wishlist yet.</p>}
 
-      {wishlist.map(w => (
-        <div key={w.id}>
-          <span>{w.item} </span>
-          <span>Added by: {w.added_by} </span>
+      <div className="flex flex-col gap-3">
+        {wishlist.map(w => (
+          <div key={w.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-3 flex-wrap">
+            <div className="flex-1">
+              <p className="font-medium text-gray-700">{w.item}</p>
+              <p className="text-sm text-gray-400">Added by {w.added_by}</p>
+            </div>
 
-          <button onClick={() => handleMove(w.id, w.item)}>
-            Move to Bill
-          </button>
-          // clicking this adds item to groceries and removes from wishlist
+            <button
+              onClick={() => handleMove(w.id, w.item)}
+              className="bg-rose-100 text-rose-500 hover:bg-rose-200 px-3 py-1 rounded-full text-sm font-medium transition-colors"
+            >
+              Move to Bill
+            </button>
 
-          {confirmDelete === w.id ? (
-            <>
-              <button onClick={() => handleDelete(w.id)}>Yes, delete</button>
-              <button onClick={() => setConfirmDelete(null)}>Cancel</button>
-            </>
-          ) : (
-            <button onClick={() => setConfirmDelete(w.id)}>Delete</button>
-          )}
-        </div>
-      ))}
+            {confirmDelete === w.id ? (
+              <div className="flex gap-2">
+                <button onClick={() => handleDelete(w.id)} className="text-red-400 text-sm hover:text-red-500">Yes</button>
+                <button onClick={() => setConfirmDelete(null)} className="text-gray-400 text-sm hover:text-gray-500">Cancel</button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDelete(w.id)} className="text-gray-300 hover:text-red-400 transition-colors">🗑️</button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

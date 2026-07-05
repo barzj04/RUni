@@ -45,7 +45,7 @@ export default function App() {
 
   if (session) {
     return (
-      <div>
+      <div className="min-h-screen bg-rose-50">
         <Navbar
           activePage={activePage}
           setActivePage={setActivePage}
@@ -53,8 +53,8 @@ export default function App() {
         />
         {/* Navbar handles tab switching and logout */}
 
-        <div style={{ padding: '20px' }}>
-          <p>Logged in as: {session.user.email}</p>
+        <div className='max-w-3xl mx-auto px-4 py-8'>
+          <p className='text-sm text-gray-400 mb-6'>Logged in as: {displayName}</p>
 
           {activePage === 'Groceries' && <Groceries displayName={displayName} />}
           {activePage === 'Wishlist' && <GroceryWishlist displayName={displayName} />}

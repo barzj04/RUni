@@ -10,6 +10,7 @@ import {
     deletePersonalTodo
 } from '../services/personalService';
 import { sanitizeInput } from '../utils/sanitize'
+import Spinner from '../components/Spinner'
 
 export default function Personal({ userId, displayName }) {
     const [wishlist, setWishlist] = useState([]);
@@ -17,14 +18,15 @@ export default function Personal({ userId, displayName }) {
     const [wishItem, setWishItem] = useState('');
     const [todoTask, setTodoTask] = useState('');
     const [error, setError] = useState(null);
-    const [confirmDelete, setConfirmDelete] = useState(null);
+    const [confirmDeleteWish, setConfirmDeleteWish] = useState(null);
     const [confirmDeleteTodo, setConfirmDeleteTodo] = useState(null);
-    
+    const [loading, setLoading] = useState(false);
     useEffect(() => {
         loadAll()
     }, [])
 
     async function loadAll() {
+        setLoading(true)
         try {
             const [wishData, todoData] = await Promise.all([
                 fetchPersonalWishlist(userId),
@@ -35,6 +37,8 @@ export default function Personal({ userId, displayName }) {
             setTodo(todoData)
         } catch (err) {
             setError(err.message)
+        }finally {
+            setLoading(false)
         }
     }
 
@@ -63,7 +67,7 @@ export default function Personal({ userId, displayName }) {
     async function handleDeleteWish(id) {
         try {
             await deletePersonalWishlist(id);
-            setConfirmDelete(null);
+            setConfirmDeleteWish(null);
             await loadAll();
         } catch (err) {
             setError(err.message);
@@ -105,79 +109,103 @@ export default function Personal({ userId, displayName }) {
 
     const wishDone = wishlist.filter(item => item.done).length;
     const todoDone = todo.filter(task => task.done).length;
-
-    return(
+    if (loading) return <Spinner />
+    return (
         <div>
-            <h2>Personal Space for - {displayName}</h2>
-            {error && <p style={{color: 'red'}}>{error}</p>}
-            {/* Wishlist Section */}
-            <h3>To Buy Wishlist</h3>
-            <p>{wishDone} of {wishlist.length} items purchased</p>
-            <div>
-                <input
+        <h2 className="text-2xl font-bold text-gray-700 mb-2">🔒 Personal Space</h2>
+        <p className="text-gray-400 text-sm mb-6">Only you can see this.</p>
+
+        {error && <p className="text-red-400 mb-4">{error}</p>}
+
+        {/* ── WISHLIST ── */}
+        <div className="bg-white rounded-xl shadow p-4 mb-6">
+            <h3 className="font-semibold text-gray-700 mb-1">🛍️ To-Buy Wishlist</h3>
+            <p className="text-sm text-gray-400 mb-4">{wishDone} of {wishlist.length} bought</p>
+
+            <div className="flex gap-2 mb-4">
+            <input
                 type="text"
-                placeholder='e.g. laksa yum yum'
+                placeholder="e.g. New earphones"
                 value={wishItem}
                 onChange={(e) => setWishItem(e.target.value)}
+                className="border border-rose-200 rounded-lg px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-rose-300"
             />
-            <button onClick={handleAddWishlist}>Add to Wishlist</button>
+            <button onClick={handleAddWishlist} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors">
+                Add
+            </button>
             </div>
 
-            {wishlist.length === 0 && <p>Your wishlist is empty.</p>}
+            {wishlist.length === 0 && <p className="text-gray-400 text-sm">Nothing on your wishlist yet.</p>}
+
+            <div className="flex flex-col gap-2">
             {wishlist.map(w => (
-                <div key={w.id}>
-                    <input
+                <div key={w.id} className="flex items-center gap-3">
+                <input
                     type="checkbox"
                     checked={w.done}
                     onChange={() => handleToggleWish(w.id, w.done)}
-                    /> 
-                    {/* checkbox toggles the done state*/}
-                    <span style={{textDecoration: w.done ? 'line-through' : 'none'}}>
-                        {w.item} (added by {w.owner})
-                    </span>
-                    {/* strikethrough text when done */}
-                    {confirmDelete === w.id ? (
-                        <>
-                            <button onClick={() => handleDeleteWish(w.id)}>Confirm Delete</button>
-                            <button onClick={() => setConfirmDelete(null)}>Cancel</button>
-                        </>
-                    ) : (
-                        <button onClick={() => setConfirmDelete(w.id)}>Delete</button>
-                    )}
-                </div>
-            ))}
-            {/* Todo Section */}
-            <h3>To Do List</h3>
-            <p>{todoDone} of {todo.length} tasks completed</p>
-            <div>
-                <input
-                    type="text"
-                    placeholder='e.g. finish project'
-                    value={todoTask}
-                    onChange={(e) => setTodoTask(e.target.value)}
+                    className="accent-rose-400 w-4 h-4"
+                    // accent-rose-400 → pink checkbox color
                 />
-                <button onClick={handleAddTodo}>Add to Todo List</button>
-            </div>
-            {todo.length === 0 && <p>Your todo list is empty.</p>}
-            {todo.map(t => (
-                <div key={t.id}>
-                    <input
-                        type="checkbox"
-                        checked={t.done}
-                        onChange={() => handleToggleTodo(t.id, t.done)}
-                    />
-                    <span style={{textDecoration: t.done ? 'line-through' : 'none'}}>
-                        {t.task}
-                    </span>
-                    {confirmDeleteTodo === t.id ? (
-                        <>
-                            <button onClick={() => handleDeleteTodo(t.id)}>Confirm Delete</button>
-                            <button onClick={() => setConfirmDeleteTodo(null)}>Cancel</button>
-                        </>
-                    ) : (
-                        <button onClick={() => setConfirmDeleteTodo(t.id)}>Delete</button>
-                    )}
+                <span className={`flex-1 text-gray-700 ${w.done ? 'line-through text-gray-400' : ''}`}>
+                    {w.item}
+                </span>
+                {confirmDeleteWish === w.id ? (
+                    <div className="flex gap-2">
+                    <button onClick={() => handleDeleteWish(w.id)} className="text-red-400 text-sm hover:text-red-500">Yes</button>
+                    <button onClick={() => setConfirmDeleteWish(null)} className="text-gray-400 text-sm hover:text-gray-500">Cancel</button>
+                    </div>
+                ) : (
+                    <button onClick={() => setConfirmDeleteWish(w.id)} className="text-gray-300 hover:text-red-400 transition-colors">🗑️</button>
+                )}
                 </div>
             ))}
+            </div>
         </div>
-    )}
+
+        {/* ── TODO ── */}
+        <div className="bg-white rounded-xl shadow p-4">
+            <h3 className="font-semibold text-gray-700 mb-1">✅ To-Do List</h3>
+            <p className="text-sm text-gray-400 mb-4">{todoDone} of {todo.length} done</p>
+
+            <div className="flex gap-2 mb-4">
+            <input
+                type="text"
+                placeholder="e.g. Clean the fridge"
+                value={todoTask}
+                onChange={(e) => setTodoTask(e.target.value)}
+                className="border border-rose-200 rounded-lg px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-rose-300"
+            />
+            <button onClick={handleAddTodo} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors">
+                Add
+            </button>
+            </div>
+
+            {todo.length === 0 && <p className="text-gray-400 text-sm">No tasks yet.</p>}
+
+            <div className="flex flex-col gap-2">
+            {todo.map(t => (
+                <div key={t.id} className="flex items-center gap-3">
+                <input
+                    type="checkbox"
+                    checked={t.done}
+                    onChange={() => handleToggleTodo(t.id, t.done)}
+                    className="accent-rose-400 w-4 h-4"
+                />
+                <span className={`flex-1 text-gray-700 ${t.done ? 'line-through text-gray-400' : ''}`}>
+                    {t.task}
+                </span>
+                {confirmDeleteTodo === t.id ? (
+                    <div className="flex gap-2">
+                    <button onClick={() => handleDeleteTodo(t.id)} className="text-red-400 text-sm hover:text-red-500">Yes</button>
+                    <button onClick={() => setConfirmDeleteTodo(null)} className="text-gray-400 text-sm hover:text-gray-500">Cancel</button>
+                    </div>
+                ) : (
+                    <button onClick={() => setConfirmDeleteTodo(t.id)} className="text-gray-300 hover:text-red-400 transition-colors">🗑️</button>
+                )}
+                </div>
+            ))}
+            </div>
+        </div>
+    </div>
+  )}
