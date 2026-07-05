@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './services/supabaseClient'
+import { fetchProfile } from './services/profileService'
+
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Groceries from './pages/Groceries'
@@ -12,19 +14,33 @@ export default function App() {
   const [session, setSession] = useState(null)
   const [page, setPage] = useState('login')
   const [activePage, setActivePage] = useState('Groceries')
+  const [displayName, setDisplayName] = useState('')
   // activePage → tracks which tab is currently showing, defaults to Groceries
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
+      if (session) loadProfile(session.user.id)
     })
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      if (session) loadProfile(session.user.id)
     })
   }, [])
 
+  async function loadProfile(userId) {
+    try {
+      const name = await fetchProfile(userId)
+      console.log('display name loaded:', name)
+      setDisplayName(name)
+    }catch (err) {
+      console.error('Error fetching profile:', err)
+    }}
+
+
   function handleLogout() {
     supabase.auth.signOut()
+    setDisplayName('')
   }
 
   if (session) {
@@ -40,9 +56,9 @@ export default function App() {
         <div style={{ padding: '20px' }}>
           <p>Logged in as: {session.user.email}</p>
 
-          {activePage === 'Groceries' && <Groceries displayName={session.user.email} />}
-          {activePage === 'Wishlist' && <GroceryWishlist displayName={session.user.email} />}
-          {activePage === 'Personal' && <Personal userId={session.user.id} displayName={session.user.email} />}
+          {activePage === 'Groceries' && <Groceries displayName={displayName} />}
+          {activePage === 'Wishlist' && <GroceryWishlist displayName={displayName} />}
+          {activePage === 'Personal' && <Personal userId={session.user.id} displayName={displayName} />}
           {/* only renders the active tab's component */}
         </div>
       </div>
