@@ -18,7 +18,6 @@
 
 ### 🔒 Personal Tab (Your Private Sanctuary)
 *   A completely private wishlist and to-do list just for you. 
-*   **Row Level Security (RLS)** ensures your roommates will *never* see that you're planning to buy the expensive snacks you refuse to share.
 
 ---
 
@@ -48,19 +47,7 @@ We don't just write code; we write *nice* code.
 *   **Separation of Concerns:** Clean architecture with dedicated folders for services, pages, components, and utils.
 *   **Bulletproof Math:** Unit-tested bill-splitting logic to prevent fractional-penny arguments.
 *   **Smooth UX:** Elegant loading states on all data fetching. No awkward layout shifts here.
-
 ---
-
-## 📂 Project Structure
-
-```text
-src/
-├── components/   # Reusable UI pieces (Navbar, Spinner, etc.)
-├── pages/        # Full page views (Groceries, Personal, Login)
-├── services/     # All Supabase API calls and database interactions
-├── hooks/        # Custom React hooks for clean state management
-└── utils/        # Helper functions (sanitize, billSplitting math)
-
 🚀 Local Setup
 Want to run RUni locally? Let's get you set up in less time than it takes to argue about whose turn it is to take out the trash.
 
@@ -85,5 +72,20 @@ npm run dev
 🧪 Running Tests
 Does the math actually add up? Check for yourself:
 
+Bash
+npm test
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── components/   # Reusable UI pieces (Navbar, Spinner, etc.)
+├── pages/        # Full page views (Groceries, Personal, Login)
+├── services/     # All Supabase API calls and database interactions
+├── hooks/        # Custom React hooks for clean state management
+└── utils/        # Helper functions (sanitize, billSplitting math)
+
+'''text
 Bash
 npm test
