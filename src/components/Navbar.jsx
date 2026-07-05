@@ -1,5 +1,5 @@
 export default function Navbar({ activePage, setActivePage, onLogout }) {
-  const tabs = ['Schedule','Groceries', 'Wishlist', 'Personal']
+  const tabs = ['Schedule','Groceries','Recipes', 'Wishlist', 'Personal']
 
   return (
     <nav className="bg-white shadow-sm px-6 py-4 flex justify-between items-center">
