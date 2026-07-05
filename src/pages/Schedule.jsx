@@ -27,6 +27,7 @@ export default function Schedule({userId, displayName}) {
                 mapped[row.roommate]=row.schedule
                 if (row.roommate !== displayName) {
                     setPartnerLastUpdated(row.updated_at)
+                    console.log('partner updated_at:', row.updated_at)
                 }
             })
             setSchedules(mapped)

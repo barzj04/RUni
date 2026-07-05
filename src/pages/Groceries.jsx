@@ -13,6 +13,7 @@ export default function Groceries({displayName}) {
     const[confirmDelete, setConfirmDelete] = useState(false);
     const[confirmClear, setConfirmClear] = useState(false);
     const [loading, setLoading] = useState(false)
+    const [forWho, setForWho] = useState('both')
 
     useEffect(() => {
         loadGroceries();
@@ -39,10 +40,11 @@ export default function Groceries({displayName}) {
         const sanitizedItem = sanitizeInput(item)
        
         try {
-        await addGrocery(sanitizedItem, parsedPrice, paidBy)
-        setItem('')
-        setPrice('')
-        await loadGroceries()
+            await addGrocery(sanitizedItem, parsedPrice, paidBy, forWho)
+            setItem('')
+            setPrice('')
+            setForWho('both')
+            await loadGroceries()
         } catch (err) {
         setError(err.message)
         }
@@ -94,6 +96,12 @@ export default function Groceries({displayName}) {
                 onChange={(e) => setPrice(e.target.value)}
                 className="border border-rose-200 rounded-lg px-3 py-2 w-32 focus:outline-none focus:ring-2 focus:ring-rose-300"
                 />
+                <select value={forWho} onChange={(e) => setForWho(e.target.value)}
+                    className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
+                    <option value="both">Both</option>
+                    <option value={displayName}>{displayName}'s</option>
+                    <option value="Rachel">Rachel's</option>
+                </select>
                 <select value = {paidBy} onChange={(e) => setPaidBy(e.target.value)}
                     className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
                     <option value={displayName}>{displayName}</option>
@@ -106,7 +114,6 @@ export default function Groceries({displayName}) {
             <div className="bg-white rounded-xl shadow p-4 mb-6">
                 <h3 className="font-semibold text-gray-700 mb-3">💰 Bill Summary</h3>
                 <p className="text-gray-600">Total: <span className='font-bold'>RM {total.toFixed(2)}</span></p>
-                <p className="text-gray-600">Each Owes: <span className='font-bold'>RM {eachOwes.toFixed(2)}</span></p>
                 {Math.abs(balance) < 0.01 ? 
                     'All settled up!'
                     : balance >0 
@@ -137,7 +144,7 @@ export default function Groceries({displayName}) {
                     <div key={g.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-3 flex-wrap">
                         <div className="flex-1">
                             <p className="text-gray-700 font-medium">{g.item}</p>
-                            <p className="text-gray-400 text-sm">RM {(g.price || 0).toFixed(2)} - Paid by: {g.paid_by}</p>
+                            <p className="text-gray-400 text-sm">RM {(g.price || 0).toFixed(2)} - Paid by: {g.paid_by} · For: {g.for_who || 'both'}</p>
                         </div>
                         
                         <button onClick={() => handleTogglePaidBack(g.id, g.paid_back)}
