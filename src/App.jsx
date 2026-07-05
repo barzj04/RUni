@@ -3,6 +3,7 @@ import { supabase } from './services/supabaseClient'
 import { fetchProfile } from './services/profileService'
 import Schedule from './pages/Schedule'
 import Recipes from './pages/Recipes'
+import SharedTodo from './pages/SharedTodo'
 
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -61,6 +62,8 @@ export default function App() {
           {activePage === 'Groceries' && <Groceries displayName={displayName} />}
           {activePage === 'Recipes' && <Recipes />}
           {activePage === 'Wishlist' && <GroceryWishlist displayName={displayName} />}
+          {activePage === 'Together' && console.log('rendering SharedTodo')}
+          {activePage === 'Together' && <SharedTodo displayName={displayName} />}
           {activePage === 'Personal' && <Personal userId={session.user.id} displayName={displayName} />}
           {/* only renders the active tab's component */}
         </div>
