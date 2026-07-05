@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './services/supabaseClient'
 import { fetchProfile } from './services/profileService'
+import Schedule from './pages/Schedule'
 
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -55,7 +56,7 @@ export default function App() {
 
         <div className='max-w-3xl mx-auto px-4 py-8'>
           <p className='text-sm text-gray-400 mb-6'>Logged in as: {displayName}</p>
-
+          {activePage==='Schedule' && <Schedule userId={session.user.id} displayName={displayName} />}
           {activePage === 'Groceries' && <Groceries displayName={displayName} />}
           {activePage === 'Wishlist' && <GroceryWishlist displayName={displayName} />}
           {activePage === 'Personal' && <Personal userId={session.user.id} displayName={displayName} />}
