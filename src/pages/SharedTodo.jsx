@@ -77,7 +77,7 @@ export default function SharedTodo({ displayName }) {
       {error && <p className="text-red-400 mb-4">{error}</p>}
 
       {/* ── ADD FORM ── */}
-      <div className="bg-white rounded-xl shadow p-4 mb-6 flex gap-2">
+      <div className="bg-white rounded-xl shadow p-4 mb-6 flex flex-col gap-3 md:flex-row">
         <input
           type="text"
           placeholder="e.g. Clean the kitchen, Pay rent"
@@ -94,7 +94,7 @@ export default function SharedTodo({ displayName }) {
             />
         <button
           onClick={handleAdd}
-          className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors"
+          className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors w-full md:w-auto"
         >
           Add
         </button>
