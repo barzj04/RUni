@@ -2,28 +2,14 @@ import { useState } from 'react'
 
 export default function Navbar({ activePage, setActivePage, onLogout }) {
   const tabs = ['Schedule', 'Groceries', 'Recipes', 'Wishlist', 'Together', 'Personal']
-<<<<<<< HEAD
   const [menuOpen, setMenuOpen] = useState(false)
+
   return (
     <nav className="bg-white shadow-sm px-6 py-4">
       <div className="flex justify-between items-center">
         <span className="text-xl font-bold text-rose-500">🍳 RUni</span>
 
-=======
-<<<<<<< HEAD
-=======
-  const [menuOpen, setMenuOpen] = useState(false)
-
->>>>>>> feature/mobile-layout
-  return (
-    <nav className="bg-white shadow-sm px-6 py-4">
-      <div className="flex justify-between items-center">
-        <span className="text-xl font-bold text-rose-500">🍳 RUni</span>
-
->>>>>>> dev
-        {/* ── DESKTOP TABS — hidden on mobile ── */}
         <div className="hidden md:flex gap-4">
-          {/* hidden → hide on mobile, md:flex → show on medium screens and above */}
           {tabs.map(tab => (
             <button
               key={tab}
@@ -47,21 +33,17 @@ export default function Navbar({ activePage, setActivePage, onLogout }) {
             Logout
           </button>
 
-          {/* ── HAMBURGER BUTTON — only on mobile ── */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-gray-600 hover:text-rose-400 transition-colors text-2xl"
           >
             {menuOpen ? '✕' : '☰'}
-            {/* toggle between hamburger and close icon */}
           </button>
         </div>
       </div>
 
-      {/* ── MOBILE DROPDOWN MENU ── */}
       {menuOpen && (
         <div className="md:hidden mt-4 flex flex-col gap-2">
-          {/* md:hidden → only show on mobile */}
           {tabs.map(tab => (
             <button
               key={tab}
