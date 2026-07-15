@@ -10,10 +10,10 @@ export async function fetchGroceries() {
   return data
 }
 
-export async function addGrocery(item, price, paidBy) {
+export async function addGrocery(item, price, paidBy, forWho) {
   const { error } = await supabase
     .from('groceries')
-    .insert({ item, price, paid_by: paidBy, paid_back: false })
+    .insert({ item, price, paid_by: paidBy, paid_back: false, for_who: forWho })
   if (error) throw error
 }
 

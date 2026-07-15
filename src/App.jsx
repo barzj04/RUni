@@ -72,11 +72,16 @@ export default function App() {
   }
 
   return (
-    <div>
+    <div className="relative">
       {page === 'login' ? <Login /> : <Signup />}
-      <button onClick={() => setPage(page === 'login' ? 'signup' : 'login')}>
-        {page === 'login' ? 'Go to Sign Up' : 'Go to Login'}
-      </button>
+      <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+        <button
+          onClick={() => setPage(page === 'login' ? 'signup' : 'login')}
+          className="text-rose-400 hover:text-rose-500 text-sm font-medium"
+        >
+          {page === 'login' ? "Don't have an account? Sign Up" : 'Already have an account? Log In'}
+        </button>
+      </div>
     </div>
   )
 }

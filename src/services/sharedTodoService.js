@@ -9,10 +9,10 @@ export async function fetchSharedTodos() {
   return data
 }
 
-export async function addSharedTodo(task, addedBy) {
+export async function addSharedTodo(task, addedBy, link) {
   const { error } = await supabase
     .from('shared_todo')
-    .insert({ task, added_by: addedBy, done: false })
+    .insert({ task, added_by: addedBy, done: false, link: link || null })
   if (error) throw error
 }
 
