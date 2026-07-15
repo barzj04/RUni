@@ -2,12 +2,25 @@ import { useState } from 'react'
 
 export default function Navbar({ activePage, setActivePage, onLogout }) {
   const tabs = ['Schedule', 'Groceries', 'Recipes', 'Wishlist', 'Together', 'Personal']
+<<<<<<< HEAD
   const [menuOpen, setMenuOpen] = useState(false)
   return (
     <nav className="bg-white shadow-sm px-6 py-4">
       <div className="flex justify-between items-center">
         <span className="text-xl font-bold text-rose-500">🍳 RUni</span>
 
+=======
+<<<<<<< HEAD
+=======
+  const [menuOpen, setMenuOpen] = useState(false)
+
+>>>>>>> feature/mobile-layout
+  return (
+    <nav className="bg-white shadow-sm px-6 py-4">
+      <div className="flex justify-between items-center">
+        <span className="text-xl font-bold text-rose-500">🍳 RUni</span>
+
+>>>>>>> dev
         {/* ── DESKTOP TABS — hidden on mobile ── */}
         <div className="hidden md:flex gap-4">
           {/* hidden → hide on mobile, md:flex → show on medium screens and above */}

@@ -79,6 +79,7 @@ export default function Groceries({ displayName }) {
   }
 
   const { total, balance } = calculateBill(groceries, displayName)
+  const partnerName = displayName === 'Arleen' ? 'Rachel' : 'Arleen'
 
   if (loading) return <Spinner />
 
@@ -89,7 +90,7 @@ export default function Groceries({ displayName }) {
       {error && <p className="text-red-400 mb-4">{error}</p>}
 
       {/* ── ADD FORM ── */}
-      <div className="bg-white rounded-xl shadow p-4 mb-6 flex gap-2 flex-wrap items-end">
+      <div className="bg-white rounded-xl shadow p-4 mb-6 flex flex-col gap-3 md:flex-row md:flex-wrap md:items-end">
         <input
           type="text"
           placeholder="Item name"
@@ -109,7 +110,7 @@ export default function Groceries({ displayName }) {
           <select value={paidBy} onChange={(e) => setPaidBy(e.target.value)}
             className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
             <option value={displayName}>{displayName}</option>
-            <option value="Rachel">Rachel</option>
+            <option value={partnerName}>{partnerName}</option>
           </select>
         </div>
         <div className="flex flex-col gap-1">
@@ -118,10 +119,10 @@ export default function Groceries({ displayName }) {
             className="border border-rose-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-rose-300">
             <option value="both">Both</option>
             <option value={displayName}>{displayName}'s</option>
-            <option value="Rachel">Rachel's</option>
+            <option value={partnerName}>{partnerName}'s</option>
           </select>
         </div>
-        <button onClick={handleAdd} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors">
+        <button onClick={handleAdd} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors w-full md:w-auto">
           Add Item
         </button>
       </div>
@@ -134,8 +135,8 @@ export default function Groceries({ displayName }) {
           {Math.abs(balance) < 0.01
             ? '✅ All settled up!'
             : balance > 0
-            ? `Rachel owes you RM ${balance.toFixed(2)}`
-            : `You owe Rachel RM ${Math.abs(balance).toFixed(2)}`
+            ? `${partnerName} owes you RM ${balance.toFixed(2)}`
+            : `You owe ${partnerName} RM ${Math.abs(balance).toFixed(2)}`
           }
         </p>
       </div>

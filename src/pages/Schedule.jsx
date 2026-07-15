@@ -7,12 +7,9 @@ const MEALS=[ 'Lunch', 'Dinner']
 
 function getWeekDates() {
   const today = new Date()
-  console.log('today:', today.toDateString())
   const dayOfWeek = today.getDay()
-  console.log('dayOfWeek:', dayOfWeek)
   const monday = new Date(today)
   monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1))
-  console.log('monday:', monday.toDateString())
   return DAYS.map((day, i) => {
     const date = new Date(monday)
     date.setDate(monday.getDate() + i)

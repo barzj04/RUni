@@ -75,7 +75,7 @@ export default function GroceryWishlist({ displayName }) {
           onChange={(e) => setItem(e.target.value)}
           className="border border-rose-200 rounded-lg px-3 py-2 flex-1 focus:outline-none focus:ring-2 focus:ring-rose-300"
         />
-        <button onClick={handleAdd} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors">
+        <button onClick={handleAdd} className="bg-rose-400 text-white px-4 py-2 rounded-lg hover:bg-rose-500 transition-colors w-full md:w-auto">
           Add
         </button>
       </div>
