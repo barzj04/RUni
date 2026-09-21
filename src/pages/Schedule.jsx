@@ -5,11 +5,22 @@ import Spinner from '../components/Spinner'
 const DAYS=['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const MEALS=[ 'Lunch', 'Dinner']
 
-function getWeekDates() {
-  const today = new Date()
-  const dayOfWeek = today.getDay()
-  const monday = new Date(today)
-  monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1))
+function getMonday(date) {
+  const d = new Date(date)
+  d.setHours(0, 0, 0, 0)
+  d.setDate(d.getDate() - (d.getDay() === 0 ? 6 : d.getDay() - 1))
+  return d
+}
+
+// local YYYY-MM-DD (avoids the UTC shift toISOString would cause)
+function toKey(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+function getWeekDates(monday) {
   return DAYS.map((day, i) => {
     const date = new Date(monday)
     date.setDate(monday.getDate() + i)
@@ -17,9 +28,25 @@ function getWeekDates() {
   })
 }
 
+function getISOWeek(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
+  const dayNum = d.getUTCDay() || 7
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum)
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1))
+  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7)
+}
+
+// old data was saved as { Monday: {...} } for a single week; new data is { "2026-09-21": { Monday: {...} } }
+function normalise(schedule, currentWeekKey) {
+  if (!schedule) return {}
+  if (DAYS.some(d => d in schedule)) return { [currentWeekKey]: schedule }
+  return schedule
+}
+
 export default function Schedule({userId, displayName}) {
     const [schedules, setSchedules] = useState({});
-    const [mySchedule, setMySchedule] = useState({});
+    const [mySchedule, setMySchedule] = useState({}); // all weeks, keyed by Monday date
+    const [weekStart, setWeekStart] = useState(() => getMonday(new Date()))
     const [loading, setLoading] = useState(false)
     const [saving, setSaving] = useState(false)
     const [saved, setSaved] = useState(false)
@@ -36,7 +63,7 @@ export default function Schedule({userId, displayName}) {
             const data = await fetchSchedules()
             const mapped ={}
             data.forEach(row=>{
-                mapped[row.roommate]=row.schedule
+                mapped[row.roommate]=normalise(row.schedule, toKey(getMonday(new Date())))
                 if (row.roommate !== displayName) {
                     setPartnerLastUpdated(row.updated_at)
                     console.log('partner updated_at:', row.updated_at)
@@ -54,12 +81,18 @@ export default function Schedule({userId, displayName}) {
     function toggleMeal (day,meal){
         setMySchedule(prev=>({
             ...prev,
-            [day]:{
-                ...prev[day],
-                [meal]: !prev[day]?.[meal]
+            [weekKey]:{
+                ...prev[weekKey],
+                [day]:{
+                    ...prev[weekKey]?.[day],
+                    [meal]: !prev[weekKey]?.[day]?.[meal]
+                }
             }
         }))
     }
+
+    const weekKey = toKey(weekStart)
+    const myWeek = mySchedule[weekKey] || {}
 
     async function handleSave() {
         setSaving(true)
@@ -76,9 +109,17 @@ export default function Schedule({userId, displayName}) {
     }
 
     const partnerName = displayName === 'Arleen'?'Rachel':'Arleen'
-    const partnerSchedule = schedules[partnerName]||{}
-    const weekDates = getWeekDates()
+    const partnerSchedule = schedules[partnerName]?.[weekKey]||{}
+    const weekDates = getWeekDates(weekStart)
     const todayStr = new Date().toDateString()
+    const thisWeekKey = toKey(getMonday(new Date()))
+    const weekDiff = Math.round((weekStart - getMonday(new Date())) / (7 * 86400000))
+    const weekLabel = `${weekDates[0].toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })} – ${weekDates[6].toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}`
+    function shiftWeek(n) {
+      const d = new Date(weekStart)
+      d.setDate(d.getDate() + n * 7)
+      setWeekStart(d)
+    }
     if (loading) return <Spinner />
 
   return (
@@ -101,6 +142,33 @@ export default function Schedule({userId, displayName}) {
             )}
       {error && <p className="text-red-400 mb-4">{error}</p>}
       {saved && <p className="text-green-500 mb-4">✅ Schedule saved!</p>}
+
+      {/* ── WEEK NAVIGATOR ── */}
+      <div className="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap items-center justify-between gap-3">
+        <button onClick={() => shiftWeek(-1)} className="px-3 py-1 rounded-lg bg-rose-100 text-rose-500 hover:bg-rose-200">◀</button>
+        <div className="text-center">
+          <p className="font-semibold text-gray-700">
+            Week {getISOWeek(weekStart)} · {weekLabel}
+          </p>
+          <p className="text-xs text-gray-400">
+            {weekDiff === 0 ? 'This week' : weekDiff > 0 ? `${weekDiff} week${weekDiff > 1 ? 's' : ''} ahead` : `${-weekDiff} week${weekDiff < -1 ? 's' : ''} ago`}
+          </p>
+        </div>
+        <button onClick={() => shiftWeek(1)} className="px-3 py-1 rounded-lg bg-rose-100 text-rose-500 hover:bg-rose-200">▶</button>
+        <div className="w-full flex items-center justify-center gap-3">
+          <input
+            type="date"
+            value={toKey(weekStart)}
+            onChange={(e) => e.target.value && setWeekStart(getMonday(new Date(e.target.value + 'T00:00:00')))}
+            className="border border-rose-200 rounded-lg px-2 py-1 text-sm text-gray-600"
+          />
+          {weekKey !== thisWeekKey && (
+            <button onClick={() => setWeekStart(getMonday(new Date()))} className="text-rose-400 hover:text-rose-500 text-sm font-medium">
+              Back to this week
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* ── MY SCHEDULE ── */}
       <div className="bg-white rounded-xl shadow p-4 mb-6">
@@ -129,7 +197,7 @@ export default function Schedule({userId, displayName}) {
                     <label key={meal} className="flex items-center gap-1 cursor-pointer">
                     <input
                         type="checkbox"
-                        checked={mySchedule[day]?.[meal] || false}
+                        checked={myWeek[day]?.[meal] || false}
                         onChange={() => toggleMeal(day, meal)}
                         className="accent-rose-400 w-4 h-4"
                     />
@@ -158,8 +226,8 @@ export default function Schedule({userId, displayName}) {
           {DAYS.map((day, i) => {
             const date = weekDates[i]
             const isToday = date.toDateString() === todayStr
-            const myLunch = mySchedule[day]?.Lunch
-            const myDinner = mySchedule[day]?.Dinner
+            const myLunch = myWeek[day]?.Lunch
+            const myDinner = myWeek[day]?.Dinner
             const partnerLunch = partnerSchedule[day]?.Lunch
             const partnerDinner = partnerSchedule[day]?.Dinner
             const sharedLunch = myLunch && partnerLunch
@@ -181,8 +249,8 @@ export default function Schedule({userId, displayName}) {
             )
             })}
 
-          {DAYS.every(day => !mySchedule[day]?.Lunch && !mySchedule[day]?.Dinner) && (
-            <p className="text-gray-400 text-sm">No overlap yet. Save your schedule first.</p>
+          {DAYS.every(day => !myWeek[day]?.Lunch && !myWeek[day]?.Dinner) && (
+            <p className="text-gray-400 text-sm">No overlap yet — save your schedule first.</p>
           )}
         </div>
       </div>
